@@ -1,0 +1,13 @@
+{
+  "name": "webrtc-leak-check",
+  "version": "1.0.0",
+  "description": "Find out whether WebRTC exposes an IP address websites can't already see, without the false alarms most leak tests raise.",
+  "main": "webrtc-leak-check.js",
+  "private": true,
+  "scripts": { "test": "node tests/run.js", "vectors": "python tests/generate-vectors.py" },
+  "keywords": ["webrtc", "webrtc-leak", "vpn", "vpn-leak-test", "privacy", "ice", "stun", "ipv6"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/examineip/webrtc-leak-check.git" },
+  "homepage": "https://tools.examineip.com/vpn-leak-test/",
+  "engines": { "node": ">=14" }
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>webrtc-leak-check demo</title>
+<style>
+  body { font: 16px/1.5 system-ui, sans-serif; max-width: 680px; margin: 40px auto; padding: 0 16px; background: #0f1720; color: #e8eef3; }
+  button { font: inherit; padding: 10px 18px; border: 0; border-radius: 8px; background: #3aa8e0; color: #04121c; font-weight: 700; cursor: pointer; }
+  pre { background: #18222d; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+  .v { font-size: 20px; font-weight: 800; margin: 18px 0 4px; }
+  a { color: #7cc6f0; }
+</style>
+</head>
+<body>
+<h1>webrtc-leak-check</h1>
+<p>Compares the addresses WebRTC exposes with the address websites see over HTTP.
+The HTTP address comes from <code>api.ipify.org</code> / <code>api64.ipify.org</code>; the only other request is the STUN
+binding request to Google's public STUN server. Nothing is stored.</p>
+<button id="go">Run check</button>
+<div class="v" id="verdict"></div>
+<p id="explain"></p>
+<pre id="out"></pre>
+<p><a href="https://github.com/examineip/webrtc-leak-check">Source on GitHub</a> ·
+A fuller test (IP type, IPv6, WebRTC together): <a href="https://tools.examineip.com/vpn-leak-test/">VPN Leak Test</a></p>
+
+<script src="webrtc-leak-check.js"></script>
+<script>
+  function ip(url) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (j) { return j.ip; }).catch(function () { return null; });
+  }
+  document.getElementById('go').onclick = function () {
+    document.getElementById('verdict').textContent = 'Checking…';
+    Promise.all([ip('https://api.ipify.org?format=json'), ip('https://api64.ipify.org?format=json')])
+      .then(function (r) {
+        var v4 = r[0];
+        var v6 = r[1] && r[1].indexOf(':') !== -1 ? r[1] : null;
+        return webrtcLeakCheck.check({ ipv4: v4, ipv6: v6 }).then(function (res) {
+          document.getElementById('verdict').textContent = res.result;
+          document.getElementById('explain').textContent = res.explanation;
+          document.getElementById('out').textContent = JSON.stringify({
+            http: { ipv4: v4, ipv6: v6 },
+            leaked: res.leaked, matched: res.matched, unverified: res.unverified,
+            counts: res.gathered.counts
+          }, null, 2);
+        });
+      });
+  };
+</script>
+</body>
+</html>

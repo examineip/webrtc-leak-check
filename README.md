@@ -74,7 +74,7 @@ the HTTP address is up to you, so you choose the endpoint and nothing is sent an
 </script>
 ```
 
-[`demo.html`](demo.html) is a complete working page (it uses ipify for the HTTP address).
+**[Live demo](https://examineip.github.io/webrtc-leak-check/demo.html)** — [`demo.html`](demo.html) is a complete working page (it uses ipify for the HTTP address).
 
 ---
 
